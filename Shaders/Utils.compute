@@ -1,0 +1,5 @@
+// must be same in BuiltinShaders struct
+#pragma kernel ComputeIrradianceCS
+#pragma kernel FilterEnvionemntCS
+#pragma kernel IntegrateBRDFCS
+#include "Library/IBL.hlsl"

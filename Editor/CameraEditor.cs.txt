@@ -1,0 +1,45 @@
+using UnityEngine;
+using UnityEditor;
+using UnityEngine.Rendering;
+
+
+namespace Style.Rendering
+{
+    [CanEditMultipleObjects]
+    [CustomEditor(typeof(Camera))]
+    [SupportedOnRenderPipeline(typeof(RenderPipelineAsset))]
+    public class CameraEditor : Editor
+    {
+        SerializedCamera m_SerializedCamera;
+
+        private void OnEnable()
+        {
+            m_SerializedCamera = new SerializedCamera(serializedObject);
+
+            Undo.undoRedoPerformed += ReconstructReferenceToAdditionalDataSO;
+        }
+
+        void ReconstructReferenceToAdditionalDataSO()
+        {
+            OnDisable();
+            OnEnable();
+        }
+
+        private void OnDisable()
+        {
+            Undo.undoRedoPerformed -= ReconstructReferenceToAdditionalDataSO;
+        }
+
+        public override void OnInspectorGUI()
+        {
+            //base.OnInspectorGUI();
+        }
+    }
+
+    [CanEditMultipleObjects]
+    [CustomEditor(typeof(AdditionalCameraData))]
+    public class AdditionalCameraDataEditor : Editor
+    {
+        public override void OnInspectorGUI() { }
+    }
+}

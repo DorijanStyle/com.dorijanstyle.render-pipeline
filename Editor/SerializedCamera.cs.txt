@@ -1,0 +1,53 @@
+using UnityEngine;
+using UnityEditor.Rendering;
+using UnityEditor;
+
+namespace Style.Rendering
+{
+    public class SerializedCamera : ISerializedCamera
+    {
+        // Serialized objects
+        public SerializedObject serializedObject { get; }
+        public SerializedObject serializedAdditionalDataObject { get; }
+        public UnityEditor.CameraEditor.Settings baseCameraSettings { get; }
+
+        // Common properties
+        public SerializedProperty projectionMatrixMode => throw new System.NotImplementedException();
+        public SerializedProperty dithering => throw new System.NotImplementedException();
+        public SerializedProperty stopNaNs => throw new System.NotImplementedException();
+        public SerializedProperty allowDynamicResolution => throw new System.NotImplementedException();
+        public SerializedProperty volumeLayerMask => throw new System.NotImplementedException();
+        public SerializedProperty clearDepth => throw new System.NotImplementedException();
+        public SerializedProperty antialiasing => throw new System.NotImplementedException();
+
+        public SerializedCamera(SerializedObject camera)
+        {
+            var additional = CoreEditorUtils.GetAdditionalData<AdditionalCameraData>(camera.targetObjects);
+
+            serializedObject = camera;
+            serializedAdditionalDataObject = new SerializedObject(additional);
+
+            baseCameraSettings = new UnityEditor.CameraEditor.Settings(camera);
+            baseCameraSettings.OnEnable();
+        }
+
+        public void Apply()
+        {
+            serializedObject.ApplyModifiedProperties();
+            serializedAdditionalDataObject.ApplyModifiedProperties();
+        }
+
+        public void Refresh()
+        {
+
+        }
+
+        public void Update()
+        {
+            serializedObject.Update();
+            serializedAdditionalDataObject.Update();
+
+            baseCameraSettings.HDR.boolValue = false;
+        }
+    }
+}

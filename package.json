@@ -1,0 +1,11 @@
+{
+  "name": "com.dorijanstyle.render-pipeline",
+  "version": "1.0.0",
+  "displayName": "Style Render Pipeline",
+  "unity": "6000.0",
+  "author": {
+    "name": "Dorijan Jančić (DorijanStyle)"
+  },
+  "dependencies": {
+  }
+}

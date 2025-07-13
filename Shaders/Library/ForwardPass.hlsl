@@ -40,6 +40,8 @@ float3 _LightColor;
 Texture2D _BRDFLut;
 SamplerState sampler_BRDFLut;
 
+int _Debug;
+
 void ForwardPS(in Varyings input, out float3 color : SV_TARGET)
 {
     float3 albedo = _BaseColor.rgb;
@@ -82,10 +84,17 @@ void ForwardPS(in Varyings input, out float3 color : SV_TARGET)
         specular = specular * (1.0 + f0 * (rcp(dfg.x) - 1.0));
         
         color += (diffuse + specular) * _LightColor * NoL;
+
+        switch (_Debug)
+        {
+        case 1: color = diffuse * _LightColor * NoL; return;
+        case 2: color = specular * _LightColor * NoL; return;
+        case 3: color; return;
+        }
     }
     // color += IntegrateBRDF(albedo, roughness, metallic, N, V, L, _LightColor);
-
-    // ambient
+    // return;
+    // indirect
     {
         float3 R = reflect(-V, N);
         
@@ -95,5 +104,12 @@ void ForwardPS(in Varyings input, out float3 color : SV_TARGET)
         specular = specular * (f0 * dfg.x + dfg.y);
 
         color += (diffuse + specular);
+
+        switch (_Debug)
+        {
+        case 4: color = Irradiance(input.normalWS); return;
+        case 5: color = specular; return;
+        case 6: color = (diffuse + specular); return;
+        }
     }
 }

@@ -7,7 +7,6 @@ using UnityEngine.Rendering.RendererUtils;
 using UnityEngine.Rendering.RenderGraphModule;
 
 /*  TODO:
- *  - razdvojiti renderanje u depth i color RT
  *  - optimizirati renderanje IBL-a
  *  - HDR & auto exposure
  *  - bloom
@@ -30,20 +29,24 @@ using UnityEngine.Rendering.RenderGraphModule;
  *  - water
  */
 
-public class FERRenderPipeline : RenderPipeline
+public class StyleRenderPipeline : RenderPipeline
 {
     public static Material utilsMaterial = CoreUtils.CreateEngineMaterial("Style/Utils");
     
     // tools
-    FERRenderPipelineAsset m_Settings;
+    StyleRenderPipelineAsset m_Settings;
     RenderGraph m_RenderGraph;
+
+    RenderPipelineShaders m_Shaders;
     
     ComputeShader m_CubemapUtils;
     
-    public FERRenderPipeline(FERRenderPipelineAsset settings)
+    public StyleRenderPipeline(StyleRenderPipelineAsset settings)
     {
         m_Settings = settings;
         m_RenderGraph = new RenderGraph("FER Render Graph");
+
+        m_Shaders = GraphicsSettings.GetRenderPipelineSettings<RenderPipelineShaders>();
     }
 
     protected override void Render(ScriptableRenderContext context, Camera[] cameras)
@@ -131,12 +134,14 @@ public class FERRenderPipeline : RenderPipeline
         
         // Setup //
         LightPass.Record(m_RenderGraph, cullingResult);
+
         EnvironmentPass.RecordAmbient(m_RenderGraph, frameTextures);
         EnvironmentPass.RecordReflection(m_RenderGraph, frameTextures);
         EnvironmentPass.RecordIntegrateBRDF(m_RenderGraph, frameTextures);
         
         // Uniforms for drawing to the screen
         SetShaderUniforms(cmd, context, camera);
+        cmd.SetGlobalInt("_Debug", (int)m_Settings.debug);
         
         // Rendering /
         OpaquePass.Record(m_RenderGraph, camera, cullingResult, frameTextures);

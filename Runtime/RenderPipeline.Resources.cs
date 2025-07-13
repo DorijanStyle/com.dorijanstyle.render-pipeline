@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering.RenderGraphModule;
@@ -14,8 +15,8 @@ public readonly ref struct FrameTextures
 
     public FrameTextures(RenderGraph graph, Camera camera, Cubemap cubemap)
     {
-        color = FERRenderPipeline.CreateColorBuffer(graph, camera);
-        depth = FERRenderPipeline.CreateDepthBuffer(graph, camera);
+        color = StyleRenderPipeline.CreateColorBuffer(graph, camera);
+        depth = StyleRenderPipeline.CreateDepthBuffer(graph, camera);
         depthResolved = TextureHandle.nullHandle;
         
         backBuffer = graph.ImportBackbuffer(BuiltinRenderTextureType.CameraTarget);
@@ -52,4 +53,15 @@ public class BuiltinShaders
         kernels.Add(UtilsKernel.FILTER_ENVIRONEMNT_MAP, utilsCompute.FindKernel("FilterEnvionemntCS"));
         kernels.Add(UtilsKernel.INTEGRATE_BRDF, utilsCompute.FindKernel("IntegrateBRDFCS"));
     }
+}
+
+[Serializable]
+[SupportedOnRenderPipeline(typeof(StyleRenderPipelineAsset))]
+public class RenderPipelineShaders : IRenderPipelineResources
+{
+    public int version { get; }
+    public bool isAvailableInPlayerBuild => true;
+
+    [ResourcePath("Shaders/Utils.shader")]
+    public Shader test;
 }

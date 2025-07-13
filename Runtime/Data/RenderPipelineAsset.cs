@@ -11,23 +11,39 @@ public enum Tonemap
     ACES
 }
 
-[CreateAssetMenu(menuName = "Rendering/Render Pipeline")]
-public class FERRenderPipelineAsset : RenderPipelineAsset<FERRenderPipeline>, IRenderGraphEnabledRenderPipeline
+public enum DEBUG
 {
-    /// <summary>
-    /// ...
-    /// </summary>
-    
-    public Cubemap environment;
+    None,
+    DIFFUSE,
+    SPECULAR,
+    DIRECT,
+    IBL_IRRADIANCE,
+    IBL_RADIANCE,
+    INDIRECT
+}
 
+[CreateAssetMenu(menuName = "Rendering/Render Pipeline")]
+public class StyleRenderPipelineAsset : RenderPipelineAsset<StyleRenderPipeline>, IRenderGraphEnabledRenderPipeline
+{
+    public Cubemap environment;
+    
     public Tonemap tonemap = Tonemap.None;
+    public DEBUG debug = DEBUG.None;
     
     
     protected override RenderPipeline CreatePipeline()
     {
-        return new FERRenderPipeline(this);
+        return new StyleRenderPipeline(this);
     }
 
-    // TODO: raahhh NEW KEYWORD?!?!? 
+    protected override void EnsureGlobalSettings()
+    {
+        base.EnsureGlobalSettings();
+        
+        #if UNITY_EDITOR
+        RenderPipelineSettings.Ensure();
+        #endif
+    }
+
     public bool isImmediateModeSupported => false;
 }

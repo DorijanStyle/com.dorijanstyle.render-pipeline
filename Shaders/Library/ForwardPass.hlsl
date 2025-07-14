@@ -89,7 +89,10 @@ void ForwardPS(in Varyings input, out float3 color : SV_TARGET)
         {
         case 1: color = diffuse * _LightColor * NoL; return;
         case 2: color = specular * _LightColor * NoL; return;
-        case 3: color; return;
+        case 3: color = D; return;
+        case 4: color = Vis; return;
+        case 5: color = F; return;
+        case 6: color; return;
         }
     }
     // color += IntegrateBRDF(albedo, roughness, metallic, N, V, L, _LightColor);
@@ -107,9 +110,9 @@ void ForwardPS(in Varyings input, out float3 color : SV_TARGET)
 
         switch (_Debug)
         {
-        case 4: color = Irradiance(input.normalWS); return;
-        case 5: color = specular; return;
-        case 6: color = (diffuse + specular); return;
+        case 7: color = Irradiance(input.normalWS); return;
+        case 8: color = specular; return;
+        case 9: color = (diffuse + specular); return;
         }
     }
 }
